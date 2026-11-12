@@ -2,6 +2,7 @@
 const $ = id => document.getElementById(id);
 const app = $('app');
 const modal = $('confirm');
+const resetModal = $('reset-confirm');
 const key = 'test-hub-v1';
 const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
@@ -40,20 +41,26 @@ function stats(s) {
   const attempted = count.correct + count.incorrect;
   return {...count,attempted,accuracy:attempted ? count.correct/attempted*100 : 0,net:count.correct-count.incorrect/4,topics};
 }
+function historyRow(s,i) {
+  const paused = s.remainingMs != null;
+  const date = new Date(paused ? s.pausedAt : s.ended).toLocaleString();
+  const detail = paused ? Object.keys(s.answers).length+' of '+s.ids.length+' answered' : stats(s).net.toFixed(2)+' / '+s.ids.length+' points';
+  return '<div class="history-row"><div><span class="status '+(paused?'review':'answered')+'">'+(paused?'Paused':'Completed')+'</span><h3>'+escape(s.title)+'</h3><small>'+date+' · '+detail+'</small></div><button data-act="'+(paused?'resume-history':'history')+'" data-i="'+i+'" '+(paused&&state.active?'disabled title="Submit or reset the current test first"':'')+'>'+(paused?'Resume test':'View result')+'</button></div>';
+}
 function home() {
   const topics = [...new Set(questions.map(q=>q.topic))].sort();
   return '<section class="hero"><p class="label">Computer science practice</p><h1>Prepare for your next exam.</h1><p class="muted">'+questions.length.toLocaleString()+' extracted questions · +1 correct · −0.25 incorrect · 0 skipped</p></section>'+
     (state.active ? '<section class="card row between"><div><h2>Test in progress</h2><p class="muted">'+escape(state.active.title)+'</p></div><button class="primary" data-act="resume">Resume test</button></section>' : '')+
     '<section class="card"><h2>Build a timed test</h2><form id="setup"><fieldset '+(state.active?'disabled':'')+' style="border:0;padding:0;margin:0"><div class="fields"><label>Section<select name="topic"><option value="">All sections</option>'+topics.map(t=>'<option>'+escape(t)+'</option>').join('')+'</select></label><label>Questions<input name="count" type="number" min="1" max="'+questions.length+'" value="25" required></label><label>Minutes<input name="minutes" type="number" min="1" max="1440" value="30" required></label></div><button class="primary">Start test</button></fieldset></form></section>'+
-    '<section class="card"><h2>Test history</h2>'+(state.history.length ? state.history.map((s,i)=>'<p class="row between"><span><strong>'+escape(s.title)+'</strong><br><small>'+new Date(s.ended).toLocaleString()+' · '+stats(s).net.toFixed(2)+' / '+s.ids.length+'</small></span><button data-act="history" data-i="'+i+'">View result</button></p>').join('') : '<p class="muted">Completed tests appear here.</p>')+'</section>';
+    '<section class="card"><h2>Test history</h2>'+(state.history.length ? state.history.map(historyRow).join('') : '<p class="muted">Paused and completed tests appear here.</p>')+'</section>';
 }
 function exam() {
   const s = state.active, q = current();
   const checked = s.checked?.[q.id] === s.answers[q.id] && s.answers[q.id] != null;
-  return '<div class="layout"><section class="card"><div class="row between"><p class="label">Question '+(s.index+1)+' / '+s.ids.length+'</p><span id="timer" class="timer" role="timer"></span></div><p class="muted">'+escape(q.topic)+'</p><h2 class="stem">'+escape(q.stem)+'</h2><div class="options" role="group" aria-label="Answer choices">'+q.options.map((o,i)=>'<button class="option" data-act="answer" data-i="'+i+'" aria-pressed="'+(s.answers[q.id]===i)+'"><b>'+letters[i]+'</b><span>'+escape(o)+'</span></button>').join('')+'</div><div class="actions"><button data-act="check" '+(s.answers[q.id]==null?'disabled':'')+'>Check answer</button><button data-act="clear" '+(s.answers[q.id]==null?'disabled':'')+'>Clear response</button><button data-act="mark" aria-pressed="'+Boolean(s.marked[q.id])+'">'+(s.marked[q.id]?'Remove review mark':'Mark for review')+'</button></div>'+(checked?'<section class="feedback" id="answer-feedback" tabindex="-1" aria-labelledby="feedback-title"><h3 id="feedback-title" class="'+outcome(s,q.id)+'">'+names[outcome(s,q.id)]+'</h3>'+reference(q)+breakdown(q)+'</section>':'')+'<hr><div class="actions between"><button data-act="jump" data-i="'+(s.index-1)+'" '+(s.index===0?'disabled':'')+'>Previous</button><button class="primary" data-act="jump" data-i="'+(s.index+1)+'" '+(s.index===s.ids.length-1?'disabled':'')+'>Next</button></div></section><aside class="card"><h2>Question navigator</h2><div class="palette">'+s.ids.map((id,i)=>{
+  return '<div class="layout"><section class="card exam-card"><div class="row between"><p class="label">Question '+(s.index+1)+' / '+s.ids.length+'</p><span id="timer" class="timer" role="timer"></span></div><p class="muted">'+escape(q.topic)+'</p><h2 class="stem">'+escape(q.stem)+'</h2><div class="options" role="group" aria-label="Answer choices">'+q.options.map((o,i)=>'<button class="option" data-act="answer" data-i="'+i+'" aria-pressed="'+(s.answers[q.id]===i)+'"><b>'+letters[i]+'</b><span>'+escape(o)+'</span></button>').join('')+'</div><div class="actions"><button data-act="check" '+(s.answers[q.id]==null?'disabled':'')+'>Check answer</button><button data-act="clear" '+(s.answers[q.id]==null?'disabled':'')+'>Clear response</button><button data-act="mark" aria-pressed="'+Boolean(s.marked[q.id])+'">'+(s.marked[q.id]?'Remove review mark':'Mark for review')+'</button></div>'+(checked?'<section class="feedback" id="answer-feedback" tabindex="-1" aria-labelledby="feedback-title"><h3 id="feedback-title" class="'+outcome(s,q.id)+'">'+names[outcome(s,q.id)]+'</h3>'+reference(q)+breakdown(q)+'</section>':'')+'<hr><div class="actions between"><button data-act="jump" data-i="'+(s.index-1)+'" '+(s.index===0?'disabled':'')+'>Previous</button><button class="primary" data-act="jump" data-i="'+(s.index+1)+'" '+(s.index===s.ids.length-1?'disabled':'')+'>Next</button></div></section><aside class="card navigator"><h2>Question navigator</h2><div class="palette">'+s.ids.map((id,i)=>{
     const kind=status(s,id);
     return '<button class="'+kind+'" data-act="jump" data-i="'+i+'" aria-current="'+(i===s.index)+'" aria-label="Question '+(i+1)+', '+names[kind]+(kind==='review'&&s.answers[id]!=null?', answered':'')+'">'+(i+1)+'</button>';
-  }).join('')+'</div><p class="row legend">'+['answered','review','skipped','unvisited'].map(k=>'<span class="'+k+'">● '+names[k]+'</span>').join('')+'</p><button class="primary" data-act="confirm">Submit test</button></aside></div>';
+  }).join('')+'</div><p class="row legend">'+['answered','review','skipped','unvisited'].map(k=>'<span class="'+k+'">● '+names[k]+'</span>').join('')+'</p><div class="exam-actions"><button class="primary" data-act="confirm">Submit test</button><button data-act="reset">Reset</button></div></aside></div>';
 }
 function visuals(q) {
   return (q.visuals ?? []).map(v => {
@@ -102,6 +109,7 @@ function showResult(s) { result=s; filter='all'; reviewPage=0; go('results'); }
 function finish(expired) {
   if(!state.active)return;
   if(modal.open)modal.close();
+  if(resetModal.open)resetModal.close();
   const s={...state.active,ended:Date.now(),expired};
   state.active=null; state.history.unshift(s); save(); showResult(s);
 }
@@ -132,12 +140,22 @@ app.addEventListener('click',e=>{
   if(!b)return;
   const {act}=b.dataset,i=Number(b.dataset.i);
   if(act==='history'){showResult(state.history[i]);return;}
+  if(act==='resume-history'){
+    if(state.active || state.history[i]?.remainingMs == null)return;
+    const [{remainingMs,pausedAt,...session}]=state.history.splice(i,1);
+    state.active={...session,deadline:Date.now()+remainingMs};
+    save();go('exam');return;
+  }
   if(act==='page'){reviewPage=i;render();$('filter').focus();return;}
   if(act==='resume'){go('exam');return;}
   const s=state.active;
   if(!s)return;
   if(Date.now()>=s.deadline){finish(true);return;}
   const id=current().id;
+  if(act==='reset'){
+    resetModal.returnValue='';
+    resetModal.showModal();return;
+  }
   if(act==='confirm'){
     modal.returnValue='';
     $('confirm-summary').textContent=stats(s).skipped+' of '+s.ids.length+' questions are unanswered.';
@@ -162,6 +180,16 @@ app.addEventListener('click',e=>{
   save();render();
   const selector=act==='jump'?'[data-act="answer"]':'[data-act="'+act+'"]'+(act==='answer'?'[data-i="'+i+'"]':'');
   app.querySelector(selector)?.focus({preventScroll:true});
+});
+resetModal.addEventListener('close',()=>{
+  if(resetModal.returnValue!=='reset'||!state.active)return;
+  const {deadline,...session}=state.active;
+  const pausedAt=Date.now();
+  if(deadline<=pausedAt){finish(true);return;}
+  state.history.unshift({...session,pausedAt,remainingMs:deadline-pausedAt});
+  state.active=null;
+  save();go('home');
+  app.querySelector('[data-act="resume-history"]')?.focus();
 });
 modal.addEventListener('close',()=>{if(modal.returnValue==='submit')finish(Date.now()>=(state.active?.deadline??Infinity));});
 $('theme').addEventListener('click',()=>{state.theme=state.theme==='light'?'dark':'light';theme();save();if(view==='results')render();});
