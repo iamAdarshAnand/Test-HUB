@@ -15,3 +15,26 @@
 @media(max-width:720px){.navigator{position:static}.exam-actions{grid-template-columns:1fr 1fr}.history-row{flex-wrap:wrap}}
 .question-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0;flex:1 1 160px}.exam-source{font-size:.75rem;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:2px 7px;overflow-wrap:anywhere}.exam-card .timer{flex-shrink:0}
 .chapter-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:0 24px;list-style:none;margin:0;padding:0}.chapter-list li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line)}.chapter-list li span{overflow-wrap:anywhere}.chapter-list strong{color:var(--accent)}
+/* Compact layout with a consistent reading size and touch-friendly controls. */
+:root{font-size:15px}
+body{line-height:1.45}
+.bar,main{width:min(1080px,calc(100% - 24px))}
+.bar{min-height:54px}
+main{padding:18px 0 36px}
+h1{font-size:clamp(1.6rem,3.2vw,2.35rem);letter-spacing:-.035em}
+h2{font-size:1.15rem}
+h3{font-size:1rem}
+.card,.hero{padding:clamp(12px,2vw,20px);border-radius:13px;margin-bottom:10px}
+.hero{padding-block:clamp(18px,4vw,34px)}
+.layout{gap:10px;grid-template-columns:minmax(0,1fr) minmax(218px,270px)}
+.row,.actions,.fields,.metrics,.charts,.options{gap:8px}
+.options{margin:12px 0}
+button,select,input{padding:.42rem .65rem}
+.exam-card hr{margin:12px 0}
+.feedback{margin-top:10px;padding:12px}
+.history-row{padding:10px 0}
+.chapter-list li{padding:6px 0}
+.exam-actions{margin-top:10px}
+.timer{font-size:1.25rem}
+.plot{height:220px}
+@media(max-width:720px){.layout{grid-template-columns:minmax(0,1fr)}main{padding-top:12px}.palette{max-height:190px}}
