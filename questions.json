@@ -190,8 +190,12 @@
         "Supercomputer"
       ],
       "answer": 2,
-      "explanation": "EBCDIC stands for Extended Binary Coded\nDecimal Interchange Code. It is an 8-bit character\ncoding scheme that was developed by IBM. It is mainly\nused in mainframe of computers, especially in older\nIBM systems.",
-      "elimination": {},
+      "explanation": "EBCDIC is an 8-bit character encoding developed by IBM and associated with its mainframe platforms. The source stem says 8-byte, which is a typo.",
+      "elimination": {
+        "0": "Minicomputers are midrange systems. EBCDIC is historically associated with IBM mainframes.",
+        "1": "Microcomputers generally use ASCII-compatible character encodings.",
+        "3": "Supercomputer describes computing capacity. It does not determine character encoding."
+      },
       "visuals": [],
       "source": "Bihar STET C.S. 2019 (Shift-II)"
     },
@@ -209,7 +213,11 @@
       ],
       "answer": 1,
       "explanation": "Step 1 :- Integer part (929 → octal) use direct\ndivision\n:- 929 ÷ 8 = 116R1\n116 ÷ 8 = 14R4\n14 ÷ 8 = 1R6\n1 ÷ 8 = 0R1\n→ Reverse the remainders 92910 = 16418\nStep 2 :- Fractional part (0.19→octal) multiply by 8\nrepeatedly\n0.19 × 8 = 1.52 → 1\n0.52 × 8 = 4.16 → 4\n0.16 × 8 = 1.28 → 1\nSo, 0.1910 ≈ 0.1418\ntotal = (1641 × 141)8",
-      "elimination": {},
+      "elimination": {
+        "0": "1640 in base 8 is 928, one less than the required integer part.",
+        "2": "1632 in base 8 is 922, so its integer part is wrong.",
+        "3": "1543 in base 8 is 867, so its integer part is wrong."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2020"
     },
@@ -227,7 +235,11 @@
       ],
       "answer": 0,
       "explanation": "Step 1 :- Recall that EBCDIC is a well know\nIBM character encoding\nStep 2:- Break the acronym :\n• E → Extended\n• BCD → Binary Coded Decimal\n• IC → Interchange Code\nMatch with options → Option (a) fits perfectly",
-      "elimination": {},
+      "elimination": {
+        "1": "BCD is Binary Coded Decimal. IC is Interchange Code.",
+        "2": "Bit Case and Interconversion do not match the standard expansion.",
+        "3": "The C in BCD stands for Coded, not Case."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2020"
     },
@@ -245,7 +257,11 @@
       ],
       "answer": 2,
       "explanation": "Binary : 1101010\nGroup into 3 bits (right to left): 001 101 010 convert\neach group to octal\n• 001→1\n• 101 → 5\n• 010 → 2",
-      "elimination": {},
+      "elimination": {
+        "0": "125 in octal corresponds to binary 001 010 101.",
+        "1": "137 in octal corresponds to binary 001 011 111.",
+        "3": "155 in octal ends in binary 101, while the input ends in 010."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2020"
     },
@@ -262,8 +278,12 @@
         "(100010.010111)2"
       ],
       "answer": 3,
-      "explanation": "Steps to convert from decimal to Binary\nDivide the number by 2.\nGet the integer quotient for the next iteration\nGet the remainder for the binary digit\nRepeat the steps until the quotient is equal to 0.\nDivision by 2 Quotient Remainder\n34/2 17 0\n17/2 8 1\n8/2 4 0\n4/2 2 0\n2/2 1 0\n2/1 2 0\n(34)10 = (100010)2\nNow convert 0.36 into binary\n0.36 × 2 = 0.72 (0)\n0.72 × 2 = 1.44 (1)\n0.44 × 2 = 0.88 (0)\n0.88 × 2 = 1.76 (1)\n0.76 × 2 = 1.52 (1)\n0.52 × 2 = 1.04 (1)\n0.36 = ( 010111)2\nTherefore (34,36)10 = (100010.010111)2",
-      "elimination": {},
+      "explanation": "34 is 32 + 2, giving 100010 in binary. Repeatedly doubling .36 yields the first six fractional bits 010111. The displayed answer is a truncation.",
+      "elimination": {
+        "0": "The integer part 10010 is 18 in decimal.",
+        "1": "The integer part 10010 is 18 and the fractional part .10111 is .71875.",
+        "2": "The integer part 1010 is 10 in decimal."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2019"
     },
@@ -280,8 +300,12 @@
         "(322030)4"
       ],
       "answer": 1,
-      "explanation": "Convert (7214)8 into Decimal\n= 7 × 83\n+ 2 × 82\n+ 1 × 81\n+ 4 × 80\n= 7 × 512 + 2 × 64 + 8+4\n= 3584 + 128 + 8 + 4\n= (3724)10\nSo, option (c) is correct\nFrom option (a), (111 01 000 11 00)2\nConvert this binary number into octal\n(111 010 001 1 00)2 = (7214)8\nSo, option (a) is correct\nDecimal number to (7214)8 is (3724)10\nConvert decimal number (3724)10 equivalent to base 4\nDivide 3724 by 4 repeatedly.\n3724 ÷ 4→ Quotient 931 and remainder 0\n931 ÷ 4→ Quotient 232 and remainder 3\n232 ÷ 4→ Quotient 58 and remainder 0\n58 ÷ 4→ Quotient 14 and remainder 2\n14 ÷ 4→ Quotient 3 and remainder 2\n3 ÷ 4→ Quotient 0 and remainder 3 ( finally, last bit of\nMSB)\nHence, (3724)10 = (322030)4\nSo, option (d) is correct.\nBinary equivalent to octal number (7214)8 is\n(111010001100)2\nConvert this binary into Hexadecimal\n(1110 1000 1100)2 = (E8C)16\nSo, option (b) is not equal to (7214)8",
-      "elimination": {},
+      "explanation": "7214 in octal equals 3724 in decimal, or E8C in hexadecimal. EAC is 3756, so it is the unequal representation.",
+      "elimination": {
+        "0": "Each octal digit maps to three bits, yielding 111 010 001 100.",
+        "2": "7×512 + 2×64 + 1×8 + 4 = 3724, so this is equal to the stem value.",
+        "3": "3×1024 + 2×256 + 2×64 + 3×4 = 3724, so this is equal to the stem value."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2018"
     },
@@ -299,7 +323,11 @@
       ],
       "answer": 3,
       "explanation": "Convert (6103)8 into Decimal\n= 6 × 83\n+ 1 × 82\n+ 0 × 81\n+ 3 × 80\n= 6 × 512 + 1 × 64 + 0 + 3\n= 3072 + 64 + 0 + 3\n= (3139)10\nSo, option (c) is correct\nFrom option (a), (110001000011)2\nConvert this binary number into octal\n(110 001 000 011)2 = (6103)8\nSo, option (a) is correct\nDecimal number to (6103)8 is (3139)10\nConvert decimal number (3139)10 equivalent to base 4\nDivide 3139 by 4 repeatedly.\n3139 ÷ 4→ Quotient 784 and remainder 3\n784 ÷ 4→ Quotient 196 and remainder 0\n196 ÷ 4→ Quotient 49 and remainder 0\n49 ÷ 4→ Quotient 12 and remainder 1\n12 ÷ 4→ Quotient 3 and remainder 0\n3 ÷ 4→ Quotient 0 and remainder 3 ( finally, last bit of\nMSB)\nHence, (3139)10 = (301003)4\nSo, option (d) is not correct.\nBinary equivalent to octal number (6103)8 is\n(110001000011)2\nConvert this binary into Hexadecimal\n(1100 0100 0011)2 = (C43)16\nSo, option (d) is not eqal to (6103)8",
-      "elimination": {},
+      "elimination": {
+        "0": "6103 in octal gives 110 001 000 011 in binary.",
+        "1": "Grouping the binary digits into fours gives 1100 0100 0011, or C43 in hexadecimal.",
+        "2": "6×512 + 1×64 + 3 = 3139, which is equal to the stem value."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2019"
     },
@@ -317,7 +345,11 @@
       ],
       "answer": 0,
       "explanation": "Convert (101011)2 into decimal\n= 1 × 25\n+ 0 × 24\n+ 1 × 23\n+ 0 × 22\n+ 1 × 21\n+ 1 × 20\n= 32 + 0 + 8 + 0 + 2 + 1= 43\nConvert (11)2 into decimal\n= 1 × 21\n+ 1 × 20\n2 + 1 = 3\nAfter dividing 43 by 3, we find 14 as quotient and run\nas remainder\nBinary conversion of 14 and 3 is (1110)2 and (1)2\nrepectively",
-      "elimination": {},
+      "elimination": {
+        "1": "13×3 + 0 = 39, not 43.",
+        "2": "14×3 + 0 = 42. The remainder must be 1 to get 43.",
+        "3": "11×3 + 1 = 34, not 43."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2018"
     },
@@ -335,7 +367,11 @@
       ],
       "answer": 2,
       "explanation": "Convert Hexadecimal number (89D)16 into\ndecimal number\n= 8 × 162\n+ 9 × 161\n+ 13 × 160\n{D represents as 13}\n= 8 × 256 + 9 × 16 + 13\n= 2048 + 144 + 13 = (2205)10\nNow (2205)10 + (259)10 = (2464)10",
-      "elimination": {},
+      "elimination": {
+        "0": "9EA in hexadecimal equals 2538 in decimal.",
+        "1": "3472 in octal equals 1850 in decimal.",
+        "3": "63215 in octal equals 26253 in decimal."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2018"
     },
@@ -353,7 +389,11 @@
       ],
       "answer": 0,
       "explanation": "convert decimal (952)10 into octal number\ndivide 952 by 8 repeatedly to get octal digit.\n952 ÷ 8 = quotient 119 & remainder 0\n119 ÷ 8 = quotient 14 & remainder 7\n14 ÷ 8 = quotient 1 & remainder 6\n1 ÷ 8 = quotient 0 & remainder 1 (Finally, the lost\nremainder is 1 → MSB)\nSo,octal number is (1670)8.",
-      "elimination": {},
+      "elimination": {
+        "1": "167 in octal is 119, much smaller than 952.",
+        "2": "1607 in octal is 903. The 7 belongs in the eights place.",
+        "3": "1660 in octal is 944, one group of 8 short."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2023"
     },
@@ -371,7 +411,11 @@
       ],
       "answer": 2,
       "explanation": "• To convert the octal number (127×54)8 to\ndecimal.\nSeparate the integer part (127)8 and the fractional part\n(0.54)8.\n• Covert the integer part (127)8 to decimal:-\n1 × 82\n+ 2 × 81\n+ 7 × 8°\n64 + 16 + 7 = 87\n• Convert the fractional part (0.54)8 to decimal :-\n= 5× 8–1\n+ 4 × 8–2\n= 5 × 1\n8\n+ 4 × 1\n64\n= 0.625 + 0.0625\n= 0.6875\nCombine the integer and fractional parts.\n= 87 + 0.6875\n= (87.6875)10",
-      "elimination": {},
+      "elimination": {
+        "0": "The integer part is 64 + 16 + 7 = 87, not 78.",
+        "1": "The leading 1 already contributes 64, which is greater than 48.",
+        "3": "The 2 in the eights place contributes 16, so the integer part is 87."
+      },
       "visuals": [],
       "source": "HTET PGT C.S. 2023"
     },
@@ -389,7 +433,11 @@
       ],
       "answer": 3,
       "explanation": "Convert octal number (726)8 into decimal\nnumber\n= 7 × 82\n+ 2 × 81\n+ 6 × 80\n= 7 × 64 + 16 + 6\n= 448 + 16 + 6\n= (470)10\nConvert decimal number (470)10 into Hexadecimal\nNow, divide 470 by 16 repeatedly to get hexadecimal.\n470 ÷ 16 → quotient 29 & remainder 6\n29 ÷ 16 → quotient 1 & remainder 13 (D)\n1 ÷ 16 → quotient 0 & remainder 1 (finally, the last\nquotient is 1→ most significant\nSo, hexadecimal number = (1D6)16",
-      "elimination": {},
+      "elimination": {
+        "0": "O is not a hexadecimal digit.",
+        "1": "E4C in hexadecimal equals 3660. The input is 470 in decimal.",
+        "2": "1E3 in hexadecimal equals 483, not 470."
+      },
       "visuals": [],
       "source": "Haryana PGT C.S. Asstt. Prof. 2024"
     },
@@ -407,7 +455,11 @@
       ],
       "answer": 2,
       "explanation": "Step 1: Convert to decimal\n128 = 1 × 8 + 2 = 1010\n178 = 1 × 8 + 7 = 1510\nSo,\n10 + 15 = 2510\nStep 2: Convert 2510 to octal\n25 ÷ 8 = 3remainder 1\nSo,\n2510 = 318",
-      "elimination": {},
+      "elimination": {
+        "0": "21 in octal equals 17 decimal, while 12 octal plus 17 octal equals 25 decimal.",
+        "1": "23 in octal equals 19. The carry from 2 + 7 raises the eights digit to 3.",
+        "3": "9 is not an octal digit."
+      },
       "visuals": [],
       "source": "Haryana PGT C.S. Asstt. Prof. 2024"
     },
@@ -425,7 +477,11 @@
       ],
       "answer": 0,
       "explanation": "C1C00000 Binary =1100 0001 1100 0000\n0000 0000 0000 0000\nIEEE 754 single precision = 1 sign bit + 8 exponent\nbits + 23 mantissa bits\nsign bit = 1\nExponent bits = 10000011",
-      "elimination": {},
+      "elimination": {
+        "1": "11000011 is the entire first byte. It includes the sign and omits the final exponent bit.",
+        "2": "The high bit of the exponent is 1. This choice drops it.",
+        "3": "11000000 is the second byte. It includes fraction bits and only one exponent bit."
+      },
       "visuals": [],
       "source": "Haryana PGT C.S. Asstt. Prof. 2024"
     },

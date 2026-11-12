@@ -20,6 +20,7 @@ function theme() {
 function go(next) { view = next; render(); window.scrollTo(0,0); }
 function current() { return byId.get(state.active.ids[state.active.index]); }
 function status(s,id) {
+  if(s.answers[id]!=null && s.checked?.[id]===s.answers[id])return outcome(s,id);
   return s.marked[id] ? 'review' : s.answers[id] != null ? 'answered' : s.visited[id] ? 'skipped' : 'unvisited';
 }
 function outcome(s,id) {
@@ -60,8 +61,8 @@ function exam() {
   const checked = s.checked?.[q.id] === s.answers[q.id] && s.answers[q.id] != null;
   return '<div class="layout"><section class="card exam-card"><div class="row between"><div class="question-meta"><span class="label">Question '+(s.index+1)+' / '+s.ids.length+'</span>'+(q.source?'<span class="exam-source">'+escape(q.source)+'</span>':'')+'</div><span id="timer" class="timer" role="timer"></span></div><p class="muted">'+escape(q.topic)+'</p><h2 class="stem">'+escape(q.stem)+'</h2><div class="options" role="group" aria-label="Answer choices">'+q.options.map((o,i)=>'<button class="option" data-act="answer" data-i="'+i+'" aria-pressed="'+(s.answers[q.id]===i)+'"><b>'+letters[i]+'</b><span>'+escape(o)+'</span></button>').join('')+'</div><div class="actions"><button data-act="check" '+(s.answers[q.id]==null?'disabled':'')+'>Check answer</button><button data-act="clear" '+(s.answers[q.id]==null?'disabled':'')+'>Clear response</button><button data-act="mark" aria-pressed="'+Boolean(s.marked[q.id])+'">'+(s.marked[q.id]?'Remove review mark':'Mark for review')+'</button></div>'+(checked?'<section class="feedback" id="answer-feedback" tabindex="-1" aria-labelledby="feedback-title"><h3 id="feedback-title" class="'+outcome(s,q.id)+'">'+names[outcome(s,q.id)]+'</h3>'+reference(q)+breakdown(q)+'</section>':'')+'<hr><div class="actions between"><button data-act="jump" data-i="'+(s.index-1)+'" '+(s.index===0?'disabled':'')+'>Previous</button><button class="primary" data-act="jump" data-i="'+(s.index+1)+'" '+(s.index===s.ids.length-1?'disabled':'')+'>Next</button></div></section><aside class="card navigator"><h2>Question navigator</h2><div class="palette">'+s.ids.map((id,i)=>{
     const kind=status(s,id);
-    return '<button class="'+kind+'" data-act="jump" data-i="'+i+'" aria-current="'+(i===s.index)+'" aria-label="Question '+(i+1)+', '+names[kind]+(kind==='review'&&s.answers[id]!=null?', answered':'')+'">'+(i+1)+'</button>';
-  }).join('')+'</div><p class="row legend">'+['answered','review','skipped','unvisited'].map(k=>'<span class="'+k+'">● '+names[k]+'</span>').join('')+'</p><div class="exam-actions"><button class="primary" data-act="confirm">Submit test</button><button data-act="reset">Reset</button></div></aside></div>';
+    return '<button class="'+kind+(s.marked[id]?' flagged':'')+'" data-act="jump" data-i="'+i+'" aria-current="'+(i===s.index)+'" aria-label="Question '+(i+1)+', '+names[kind]+(kind==='review'&&s.answers[id]!=null?', answered':s.marked[id]&&kind!=='review'?', marked for review':'')+'">'+(i+1)+'</button>';
+  }).join('')+'</div><p class="row legend">'+['correct','incorrect','answered','review','skipped','unvisited'].map(k=>'<span class="'+k+'">● '+names[k]+'</span>').join('')+'</p><div class="exam-actions"><button class="primary" data-act="confirm">Submit test</button><button data-act="reset">Reset</button></div></aside></div>';
 }
 function visuals(q) {
   return (q.visuals ?? []).map(v => {
