@@ -49,7 +49,8 @@ function home() {
 }
 function exam() {
   const s = state.active, q = current();
-  return '<div class="layout"><section class="card"><div class="row between"><p class="label">Question '+(s.index+1)+' / '+s.ids.length+'</p><span id="timer" class="timer" role="timer"></span></div><p class="muted">'+escape(q.topic)+'</p><h2 class="stem">'+escape(q.stem)+'</h2><div class="options" role="group" aria-label="Answer choices">'+q.options.map((o,i)=>'<button class="option" data-act="answer" data-i="'+i+'" aria-pressed="'+(s.answers[q.id]===i)+'"><b>'+letters[i]+'</b><span>'+escape(o)+'</span></button>').join('')+'</div><div class="actions"><button data-act="clear" '+(s.answers[q.id]==null?'disabled':'')+'>Clear response</button><button data-act="mark" aria-pressed="'+Boolean(s.marked[q.id])+'">'+(s.marked[q.id]?'Remove review mark':'Mark for review')+'</button></div><hr><div class="actions between"><button data-act="jump" data-i="'+(s.index-1)+'" '+(s.index===0?'disabled':'')+'>Previous</button><button class="primary" data-act="jump" data-i="'+(s.index+1)+'" '+(s.index===s.ids.length-1?'disabled':'')+'>Next</button></div></section><aside class="card"><h2>Question navigator</h2><div class="palette">'+s.ids.map((id,i)=>{
+  const checked = s.checked?.[q.id] === s.answers[q.id] && s.answers[q.id] != null;
+  return '<div class="layout"><section class="card"><div class="row between"><p class="label">Question '+(s.index+1)+' / '+s.ids.length+'</p><span id="timer" class="timer" role="timer"></span></div><p class="muted">'+escape(q.topic)+'</p><h2 class="stem">'+escape(q.stem)+'</h2><div class="options" role="group" aria-label="Answer choices">'+q.options.map((o,i)=>'<button class="option" data-act="answer" data-i="'+i+'" aria-pressed="'+(s.answers[q.id]===i)+'"><b>'+letters[i]+'</b><span>'+escape(o)+'</span></button>').join('')+'</div><div class="actions"><button data-act="check" '+(s.answers[q.id]==null?'disabled':'')+'>Check answer</button><button data-act="clear" '+(s.answers[q.id]==null?'disabled':'')+'>Clear response</button><button data-act="mark" aria-pressed="'+Boolean(s.marked[q.id])+'">'+(s.marked[q.id]?'Remove review mark':'Mark for review')+'</button></div>'+(checked?'<section class="feedback" id="answer-feedback" tabindex="-1" aria-labelledby="feedback-title"><h3 id="feedback-title" class="'+outcome(s,q.id)+'">'+names[outcome(s,q.id)]+'</h3>'+breakdown(q)+'</section>':'')+'<hr><div class="actions between"><button data-act="jump" data-i="'+(s.index-1)+'" '+(s.index===0?'disabled':'')+'>Previous</button><button class="primary" data-act="jump" data-i="'+(s.index+1)+'" '+(s.index===s.ids.length-1?'disabled':'')+'>Next</button></div></section><aside class="card"><h2>Question navigator</h2><div class="palette">'+s.ids.map((id,i)=>{
     const kind=status(s,id);
     return '<button class="'+kind+'" data-act="jump" data-i="'+i+'" aria-current="'+(i===s.index)+'" aria-label="Question '+(i+1)+', '+names[kind]+(kind==='review'&&s.answers[id]!=null?', answered':'')+'">'+(i+1)+'</button>';
   }).join('')+'</div><p class="row legend">'+['answered','review','skipped','unvisited'].map(k=>'<span class="'+k+'">● '+names[k]+'</span>').join('')+'</p><button class="primary" data-act="confirm">Submit test</button></aside></div>';
@@ -61,11 +62,14 @@ function visuals(q) {
     return '';
   }).join('');
 }
+function breakdown(q) {
+  const option=i=>letters[i]+'. '+escape(q.options[i]);
+  return '<p><strong>Supplied key</strong> '+option(q.answer)+'</p><h3>Answer explanation</h3><p class="preserve">'+escape(q.explanation || 'No usable explanation was extracted from the source.')+'</p>'+visuals(q)+
+    '<h3>Other options</h3><ul>'+q.options.map((_,i)=>i===q.answer?'':'<li><strong>'+option(i)+'</strong>'+ (q.elimination?.[i] ? ' — '+escape(q.elimination[i]) : '<br><small>No separate explanation available.</small>')+'</li>').join('')+'</ul>';
+}
 function solution(s,id) {
   const q=byId.get(id), grade=outcome(s,id), a=s.answers[id];
-  const option=i=>letters[i]+'. '+escape(q.options[i]);
-  return '<details class="review-item"><summary><span class="'+grade+'">'+names[grade]+'</span> · '+escape(q.stem.split('\n')[0])+'</summary><p class="stem">'+escape(q.stem)+'</p><ol type="A">'+q.options.map(o=>'<li class="preserve">'+escape(o)+'</li>').join('')+'</ol><p><strong>Your response</strong> '+(a==null?'Skipped':option(a))+'</p><p><strong>Supplied key</strong> '+option(q.answer)+'</p><h3>Answer explanation</h3><p class="preserve">'+escape(q.explanation || 'No usable explanation was extracted from the source.')+'</p>'+visuals(q)+
-    (Object.keys(q.elimination ?? {}).length ? '<h3>Why the other options are incorrect</h3><ul>'+Object.entries(q.elimination).map(([i,x])=>'<li><strong>'+option(Number(i))+'</strong> — '+escape(x)+'</li>').join('')+'</ul>' : '')+'<small>PDF page '+q.page+' · Question '+q.number+' '+escape(q.source)+'</small></details>';
+  return '<details class="review-item"><summary><span class="'+grade+'">'+names[grade]+'</span> · '+escape(q.stem.split('\n')[0])+'</summary><p class="stem">'+escape(q.stem)+'</p><ol type="A">'+q.options.map(o=>'<li class="preserve">'+escape(o)+'</li>').join('')+'</ol><p><strong>Your response</strong> '+(a==null?'Skipped':letters[a]+'. '+escape(q.options[a]))+'</p>'+breakdown(q)+'<small>PDF page '+q.page+' · Question '+q.number+' '+escape(q.source)+'</small></details>';
 }
 function results() {
   const s=result, r=stats(s);
@@ -135,8 +139,20 @@ app.addEventListener('click',e=>{
     $('confirm-summary').textContent=stats(s).skipped+' of '+s.ids.length+' questions are unanswered.';
     modal.showModal();return;
   }
-  if(act==='answer')s.answers[id]=i;
-  if(act==='clear')delete s.answers[id];
+  if(act==='check' && s.answers[id]!=null){
+    s.checked ??= {};
+    s.checked[id]=s.answers[id];
+    save();render();$('answer-feedback')?.focus();
+    return;
+  }
+  if(act==='answer' && s.answers[id]!==i){
+    s.answers[id]=i;
+    if(s.checked)delete s.checked[id];
+  }
+  if(act==='clear'){
+    delete s.answers[id];
+    if(s.checked)delete s.checked[id];
+  }
   if(act==='mark')s.marked[id]=!s.marked[id];
   if(act==='jump'){s.index=i;s.visited[current().id]=true;}
   save();render();
