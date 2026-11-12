@@ -38,3 +38,4 @@ button,select,input{padding:.42rem .65rem}
 .timer{font-size:1.25rem}
 .plot{height:220px}
 @media(max-width:720px){.layout{grid-template-columns:minmax(0,1fr)}main{padding-top:12px}.palette{max-height:190px}}
+.chapter-list strong,.chapter-total{display:inline-block;white-space:nowrap;font:600 .85rem Inter,system-ui,sans-serif;color:var(--accent);background:var(--soft);border-radius:6px;padding:2px 7px}.chapter-list li{align-items:center}.chapter-total{margin-bottom:.65em}
