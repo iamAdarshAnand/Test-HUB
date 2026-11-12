@@ -8,7 +8,7 @@ const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
 let state = {theme:'light', active:null, history:[]};
 try { state = {...state, ...JSON.parse(localStorage.getItem(key))}; } catch {}
-let questions, byId, view = 'home', result, filter = 'all', reviewPage = 0, charts = [];
+let questions, byId, chapterCounts, view = 'home', result, filter = 'all', reviewPage = 0, charts = [];
 function save() {
   try { localStorage.setItem(key, JSON.stringify(state)); }
   catch { $('storage').textContent = 'Browser storage is unavailable. Keep this tab open to retain your session.'; }
@@ -48,10 +48,11 @@ function historyRow(s,i) {
   return '<div class="history-row"><div><span class="status '+(paused?'review':'answered')+'">'+(paused?'Paused':'Completed')+'</span><h3>'+escape(s.title)+'</h3><small>'+date+' · '+detail+'</small></div><button data-act="'+(paused?'resume-history':'history')+'" data-i="'+i+'" '+(paused&&state.active?'disabled title="Submit or reset the current test first"':'')+'>'+(paused?'Resume test':'View result')+'</button></div>';
 }
 function home() {
-  const topics = [...new Set(questions.map(q=>q.topic))].sort();
+  const topics = [...chapterCounts.keys()].sort((a,b)=>a.localeCompare(b));
   return '<section class="hero"><p class="label">Computer science practice</p><h1>Prepare for your next exam.</h1><p class="muted">'+questions.length.toLocaleString()+' extracted questions · +1 correct · −0.25 incorrect · 0 skipped</p></section>'+
     (state.active ? '<section class="card row between"><div><h2>Test in progress</h2><p class="muted">'+escape(state.active.title)+'</p></div><button class="primary" data-act="resume">Resume test</button></section>' : '')+
-    '<section class="card"><h2>Build a timed test</h2><form id="setup"><fieldset '+(state.active?'disabled':'')+' style="border:0;padding:0;margin:0"><div class="fields"><label>Section<select name="topic"><option value="">All sections</option>'+topics.map(t=>'<option>'+escape(t)+'</option>').join('')+'</select></label><label>Questions<input name="count" type="number" min="1" max="'+questions.length+'" value="25" required></label><label>Minutes<input name="minutes" type="number" min="1" max="1440" value="30" required></label></div><button class="primary">Start test</button></fieldset></form></section>'+
+    '<section class="card"><h2>Build a timed test</h2><form id="setup"><fieldset '+(state.active?'disabled':'')+' style="border:0;padding:0;margin:0"><div class="fields"><label>Section<select name="topic"><option value="">All sections</option>'+topics.map(t=>'<option value="'+escape(t)+'">'+escape(t)+' ('+chapterCounts.get(t).toLocaleString()+')</option>').join('')+'</select></label><label>Questions<input name="count" type="number" min="1" max="'+questions.length+'" value="25" required></label><label>Minutes<input name="minutes" type="number" min="1" max="1440" value="30" required></label></div><button class="primary">Start test</button></fieldset></form></section>'+
+    '<section class="card"><h2>Questions by chapter</h2><ul class="chapter-list">'+topics.map(t=>'<li><span>'+escape(t)+'</span><strong class="mono">'+chapterCounts.get(t).toLocaleString()+'</strong></li>').join('')+'</ul></section>'+
     '<section class="card"><h2>Test history</h2>'+(state.history.length ? state.history.map(historyRow).join('') : '<p class="muted">Paused and completed tests appear here.</p>')+'</section>';
 }
 function exam() {
@@ -132,6 +133,12 @@ app.addEventListener('submit', e=>{
   save();go('exam');
 });
 app.addEventListener('change',e=>{
+  if(e.target.name==='topic' && e.target.form?.id==='setup'){
+    const count=e.target.form.elements.namedItem('count');
+    count.max=chapterCounts.get(e.target.value) ?? questions.length;
+    if(count.valueAsNumber>Number(count.max))count.value=count.max;
+    return;
+  }
   if(e.target.id!=='filter')return;
   filter=e.target.value;reviewPage=0;render();$('filter').focus();
 });
@@ -203,6 +210,8 @@ try {
   const bank=await response.json();
   questions=bank.questions;
   byId=new Map(questions.map(q=>[q.id,q]));
+  chapterCounts=new Map();
+  for(const q of questions)chapterCounts.set(q.topic,(chapterCounts.get(q.topic)??0)+1);
   const valid=s=>s?.ids?.length&&s.ids.every(id=>byId.has(id));
   state.history=state.history.filter(valid);
   if(!valid(state.active))state.active=null;
