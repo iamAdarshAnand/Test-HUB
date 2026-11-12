@@ -113,7 +113,8 @@ function finish(expired) {
   if(modal.open)modal.close();
   if(resetModal.open)resetModal.close();
   const s={...state.active,ended:Date.now(),expired};
-  state.active=null; state.history.unshift(s); save(); showResult(s);
+  state.active=null; state.history.unshift(s); save();
+  if(view==='home')render();else showResult(s);
 }
 function tick() {
   const s=state.active;
@@ -217,7 +218,8 @@ try {
   state.history=state.history.filter(valid);
   if(!valid(state.active))state.active=null;
   app.removeAttribute('aria-busy');
-  if(state.active)go('exam');else render();
+  tick();
+  render();
   setInterval(tick,250);
 } catch(error) {
   app.removeAttribute('aria-busy');
