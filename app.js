@@ -181,8 +181,10 @@ app.addEventListener('click',e=>{
   const selector=act==='jump'?'[data-act="answer"]':'[data-act="'+act+'"]'+(act==='answer'?'[data-i="'+i+'"]':'');
   app.querySelector(selector)?.focus({preventScroll:true});
 });
-resetModal.addEventListener('close',()=>{
-  if(resetModal.returnValue!=='reset'||!state.active)return;
+resetModal.addEventListener('submit',event=>{
+  if(event.submitter?.value!=='reset'||!state.active)return;
+  event.preventDefault();
+  resetModal.close();
   const {deadline,...session}=state.active;
   const pausedAt=Date.now();
   if(deadline<=pausedAt){finish(true);return;}
