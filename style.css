@@ -13,3 +13,4 @@
 .history-row button{flex-shrink:0}
 .status{font-size:.75rem;font-weight:750}
 @media(max-width:720px){.navigator{position:static}.exam-actions{grid-template-columns:1fr 1fr}.history-row{flex-wrap:wrap}}
+.question-meta{display:flex;align-items:center;flex-wrap:wrap;gap:6px 10px;min-width:0;flex:1 1 160px}.exam-source{font-size:.75rem;color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:2px 7px;overflow-wrap:anywhere}.exam-card .timer{flex-shrink:0}
